@@ -1170,10 +1170,7 @@ void RigidBody3D::_reload_physics_characteristics() {
 //so, if you pass 45 as limit, avoid numerical precision errors when angle is 45.
 #define FLOOR_ANGLE_THRESHOLD 0.01
 
-bool CharacterBody3D::move_and_slide() {
-	// Hack in order to work with calling from _process as well as from _physics_process; calling from thread is risky
-	double delta = Engine::get_singleton()->is_in_physics_frame() ? get_physics_process_delta_time() : get_process_delta_time();
-
+bool CharacterBody3D::move_and_slide(double delta) {
 	for (int i = 0; i < 3; i++) {
 		if (locked_axis & (1 << i)) {
 			velocity[i] = 0.0;
@@ -1362,7 +1359,7 @@ void CharacterBody3D::_move_and_slide_grounded(double p_delta, bool p_was_on_flo
 							} else {
 								// Travel is too high to be safely canceled, we take it into account.
 								result.travel = result.travel.slide(up_direction);
-								motion = result.remainder;
+								motion = motion.normalized() * result.travel.length();
 							}
 							set_global_transform(gt);
 							// Determines if you are on the ground, and limits the possibility of climbing on the walls because of the approximations.
@@ -1970,7 +1967,7 @@ void CharacterBody3D::_notification(int p_what) {
 }
 
 void CharacterBody3D::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("move_and_slide"), &CharacterBody3D::move_and_slide);
+	ClassDB::bind_method(D_METHOD("move_and_slide", "delta"), &CharacterBody3D::move_and_slide);
 	ClassDB::bind_method(D_METHOD("apply_floor_snap"), &CharacterBody3D::apply_floor_snap);
 
 	ClassDB::bind_method(D_METHOD("set_velocity", "velocity"), &CharacterBody3D::set_velocity);
