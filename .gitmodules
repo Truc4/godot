@@ -1,3 +1,0 @@
-[submodule "modules/flecs_gd/flecs"]
-	path = modules/flecs_gd/flecs
-	url = https://github.com/SanderMertens/flecs.git
