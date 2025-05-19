@@ -2,6 +2,9 @@ Import("env")
 Import("env_modules")
 
 env_flecs = env_modules.Clone()
-env_flecs.Prepend(CPPPATH=["#modules/flecs_gd/flecs/"])
+env_flecs.Prepend(CPPPATH=[
+    "#modules/flecs_gd/flecs/distr/",
+    "#modules/flecs_gd/flecs/"
+])
 env_flecs.add_source_files(env.modules_sources, "#modules/flecs_gd/flecs/flecs.c")
 env_flecs.add_source_files(env.modules_sources, "*.cpp")
